@@ -1,0 +1,32 @@
+{
+    "title" : "Miért kellene megtanulnom programozni?",
+    "headline" : "Stipendium Peregrinum Oktatóvideók - Programozás 1.0",
+    "date" : "2022. április 17.",
+    "media" : "custom",
+    "footer_file" : "../shared_media/logos/full_footer_transparent.png",
+    "footer_scale" : 0.8,
+    "after_footer_wait" : 5.0,
+    "before_footer_wait" : 0.2,
+    "before_start_wait" : 3.0,
+    "media_path" : "../shared_media/intro_outro/screen.png",
+    "media_scale" : 0.4,
+    "logo_path" : "media/images/course_logos",
+    "universities" : ["bme.png","elte.png","szte.png"],
+    "free_courses" : ["infoc.png", "khan_academy.png", "mit_ocw.jpg"],
+    "paid_courses" : ["udemy.png", "coursera.png", "codecool.png"],
+    "programming_def_wiki" : "A számítógép-programozás (vagy egyszerűen programozás) egy vagy több absztrakt \nalgoritmus megvalósítását jelenti egy bizonyos programozási nyelven.",
+    "programming_def_modified" : "A ",
+    "algo_def" : "Algoritmus: pontosan megfogalmazott módszer-utasítássorozat \negy feladat megoldására",
+    "language_def" : "Programozási nyelv: ember által is érthető utasítások sorozata,\namit egy számítógép végre tud hajtani.",
+    "display_languages" : "C\n C++ \nJava \nPython \n...",
+    "algo_captions" : [
+        ["Nyisd meg a fájlt!", "Cseréld a '.'-okat ','-re!", "Zárd be a fájlt!"],
+        ["Ákosfalván hajts rá a 13-asra!", "Csíkszeredán térj rá az E578-ra!", "Haladj egyenesen a célig!"],
+        ["Pirítsd üvegesre a hagymát!", "Verd fel a tojást!", "Öntsd a tojást a hagymára!"]
+    ],
+    "svg_algo_path" : "media/images/everyday_objects",
+    "svg_algo_files" : ["files.svg","car.svg","egg.svg"],
+    "bubble_path" : "bubble.svg",
+    "prog_languages" : "C\nC++\nJava\nPython\n..."
+
+}
