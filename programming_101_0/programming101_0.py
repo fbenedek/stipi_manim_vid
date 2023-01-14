@@ -5,6 +5,146 @@ import os
 from manim import *
 import numpy as np
 
+class ProgrammingDefScene(Scene):
+
+    def construct(self):
+        '''
+        Plays the scene defining what programming means
+        '''
+        with open('intro_settings.json') as f:
+            params = json.load(f)
+        self.wiki_attributes = []
+        self.wiki_logo = ImageMobject(os.path.join(params["logo_path"], "wiki_logo.png"))
+        self.wiki_logo.scale_to_fit_height(6)
+        self.wiki_attributes.append(self.wiki_logo)
+        self.play(FadeIn(self.wiki_logo))
+        self.wait(2)
+        self.play(self.wiki_logo.animate.scale(0.25), duration = 0.4)
+        self.play(self.wiki_logo.animate.move_to([-6.0, 2.6, 0.0]))
+        self.prog_def = Text(params["programming_def_wiki"],
+            font_size = 20, font = params["font"])
+        self.prog_def.next_to(Dot(np.array([1.0, 3.5, 0.0])), DOWN)
+        self.wiki_attributes.append(self.prog_def)
+        self.play(Write(self.prog_def))
+        self.wait(3)
+        
+        self.algo_def = Text(params["algo_def"],
+            font_size = 25, font = params["font"])
+        self.language_def = Text(params["language_def"],
+            font_size = 17, font = params["font"])
+
+        # original: next_to(Dot(np.array([-3.5,1.5,0.0])), DOWN)
+        self.algo_def.next_to(Dot(np.array([0.0,2.0,0.0])), DOWN)
+        self.wiki_attributes.append(self.algo_def)
+        self.language_def.next_to(Dot(np.array([3.5,1.5,0.0])), DOWN)
+        self.wiki_attributes.append(self.language_def)
+
+        self.play(Write(self.algo_def))
+
+        box_no = 3
+        flowchart = []
+        box_w = 1.0
+        box_h = 2.0
+        for box_idx in range(box_no):
+            current_box = Rectangle(width = 3.85, height = 1.2)
+            flowchart.append(current_box)
+            if box_idx < box_no - 1:
+                current_arrow = Arrow(start=LEFT, end=RIGHT, color = BLUE, max_stroke_width_to_length_ratio=2.5)
+                current_arrow = VMobject.scale(current_arrow,0.5)
+                flowchart.append(current_arrow)
+
+        # distribute 
+        self.algo_visualization = VGroup(*flowchart)
+        self.algo_visualization.arrange_in_grid(rows = 1, buff = 0.1)
+        self.algo_visualization.next_to(Dot(np.array([0.0,0.5, 0.0])),DOWN)
+
+        svg_algo_path = params["svg_algo_path"]
+        svg_files = params["svg_algo_files"]        
+        svg_objects = [SVGMobject(file_name = os.path.join(svg_algo_path, svg_files[i]), color = WHITE) for i in range(len(svg_files))]
+        current_icon = svg_objects[0]
+        current_icon.next_to(self.algo_visualization, DOWN)
+        self.play(FadeIn(current_icon))
+        self.wait(3)
+        
+        
+        self.play(FadeIn(self.algo_visualization), duration = 0.5)
+        self.wait(3)
+
+        # switching captions
+        text_list = []
+        cap_size = 17
+        for box_idx in range(box_no):
+            current_box = flowchart[2*box_idx]
+            center = current_box.get_center()
+            caption = Text(params["algo_captions"][0][box_idx], font_size = cap_size, font = params["font"])
+            caption.move_to([center[0], center[1], 0.0])
+            text_list.append(caption)
+            self.play(Write(caption), duration = 0.5)
+        
+        num_of_switches = len(svg_files) - 1
+        # iterate thru texts and transform
+        for switch_idx in range(num_of_switches):
+            new_icon = svg_objects[switch_idx + 1]
+            new_icon.next_to(self.algo_visualization, DOWN)
+            self.play(ReplacementTransform(current_icon, new_icon))
+            current_icon = new_icon
+            for box_idx in range(box_no):
+                # transform box contents
+                current_box = flowchart[2*box_idx]
+                caption = Text(params["algo_captions"][switch_idx + 1][box_idx], font_size = cap_size, font = params["font"])
+                center = current_box.get_center()
+                caption.move_to([center[0], center[1], 0.0])
+                self.play(ReplacementTransform(text_list[box_idx], caption))
+                text_list[box_idx] = caption
+            
+            self.wait(5)
+        
+        # Move this to the side
+        self.full_algo_visualization = [self.algo_visualization] + text_list + [current_icon]
+        self.full_algo_visualization_group = Group(*self.full_algo_visualization)
+        self.wiki_attributes = self.wiki_attributes + self.full_algo_visualization
+        self.play(self.algo_def.animate.scale(17/25), duration = 0.2)
+        self.play(self.algo_def.animate.move_to([-3.5,1.5,0.0], UP), duration = 0.2)
+        self.play(self.full_algo_visualization_group.animate.scale(0.5), duration = 0.2)
+        self.play(self.full_algo_visualization_group.animate.move_to([-3.5, -1.5, 0.0]), duration = 0.3)
+        
+        self.wait(3)
+        
+        self.play(Write(self.language_def))
+        self.wait(2)
+
+        # Computer with a speech bubble, w. some languages
+        self.screen_image = ImageMobject(params["media_path"])
+        self.screen_image.scale(0.125)
+        self.screen_image.next_to(Dot(np.array([0,2.3,0])), DOWN)
+        #self.screen_image.next_to(Dot(np.array([3,0.0,0])), DOWN)
+         
+        # Add bubble
+        self.speech_bubble = SVGMobject(file_name = os.path.join(svg_algo_path, params['bubble_path']), color = WHITE, stroke_width=0.1)
+        self.speech_bubble.next_to(Dot(np.array([1.5,1.5,0])), DOWN)
+        self.speech_bubble.scale(0.85)
+        
+        
+
+        self.prog_languages = Text(params["prog_languages"], font_size = 15, font = params["font"])
+        self.prog_languages.next_to(Dot(np.array([0.5,0.33,0]), DOWN))
+        
+        self.prog_languages_group = Group(self.screen_image, self.speech_bubble, self.prog_languages)
+        self.prog_languages_group.next_to(Dot(np.array([3.0,0.8,0.0])), DOWN)
+
+        self.wait(5)
+        self.play(FadeIn(self.screen_image), FadeIn(self.speech_bubble))
+        self.play(Write(self.prog_languages))
+        self.wait(5)
+        self.play(
+            *[FadeOut(mob)for mob in self.wiki_attributes]
+        )
+        self.play(self.prog_languages_group.animate.move_to([3.5, 0.0, 0.0]))
+        self.play(self.prog_languages_group.animate.scale(1.25))
+        self.wait(5)
+        # load wiki, youtube logo, then fortnite/insta/tiktok...
+
+
 
 class IntroScene(Scene):
 
@@ -12,14 +152,12 @@ class IntroScene(Scene):
         '''
         Assembles and runs the opening scene. 
         '''
-        # import settings and set title y coordinate
         with open('intro_settings.json') as f:
             params = json.load(f)
-        up_coord = 4.0
+        # init and position MObjects
+        up_coord = params["up_coord"]
         if params["media"] == "blank":
             up_coord = 1.2
-
-        # init and position MObjects
         # title
         title = Text(params["title"], font_size = 30, font = 'TeX Gyre Schola Math')
         title.next_to(Dot(np.array([0,up_coord,0])), DOWN)
@@ -84,7 +222,7 @@ class IntroScene(Scene):
                 movie_title = movie_list[0],
                 movie_date = movie_dates[0],
                 media_type = type_list[0]),
-            font_size = 20, font = "Ubuntu Mono")
+            font_size = 20, font = params["font"])
         
         movie_text_height = -3.2
 
@@ -100,196 +238,17 @@ class IntroScene(Scene):
                         movie_title = title, 
                         movie_date = date,
                         media_type = media_type),
-                    font_size = 20, font = "Ubuntu Mono")
+                    font_size = 20, font = params["font"])
                 self.new_movie_cite.next_to(Dot(np.array([0,movie_text_height,0])), DOWN)
                 self.play(ReplacementTransform(self.movie_cite, self.new_movie_cite))
                 self.movie_cite = self.new_movie_cite
                 self.wait(2)
 
+        # clear the scene
         self.play(
             *[FadeOut(mob)for mob in self.mobjects]
         )
-        # display some of the courses you can sign up to
-        0
         
-        self.chapter_title = Text("Elérhető kurzusok...", font_size = 30, font = "Ubuntu Mono")
-        self.chapter_title.next_to(Dot(np.array([0,up_coord,0])), DOWN)
-        
-        self.current_components = []
-        self.highlight_boxes = []
-        
-        course_types = ["universities", "free_courses", "paid_courses"]
-        course_texts = ["Egyetemek", "Ingyen kurzusok", "Fizetős kurzusok"]
-        
-        for course_type, course_text in zip(course_types,course_texts):
-            # write text
-            sub = Text(course_text,
-                font_size = 20,
-                font = "Ubuntu Mono")
-            self.current_components.append(sub)
-            highlight_box = Rectangle(width = sub.width + 0.1, height = sub.height+0.2)
-            self.highlight_boxes.append(highlight_box)
-            
-            for media_name in params[course_type]:
-                media_path = os.path.join(params["logo_path"], media_name)
-                image = ImageMobject(media_path)
-                image.scale_to_fit_height(1.2)
-                if media_name == ["bme.png"] or media_name == ["coursera.png"]:
-                    image.scale_to_fit_height(0.4)
-                self.current_components.append(image)
-        
-        self.current_group = Group(*self.current_components)
-        self.current_group.arrange_in_grid(rows = 3, buff = 0.5)
-        for idx, box in enumerate(self.highlight_boxes):
-            center = self.current_components[4*idx].get_center()
-            box.move_to([center[0], center[1], 0.0])
-        self.play(Write(self.chapter_title))
-        self.play(FadeIn(self.current_group))
-        self.wait(2)
-        self.play(Create(self.highlight_boxes[0]))
-        self.wait(2)
-        # try modifying the course icons for display
-        self.play(self.current_components[5].animate.scale(1.7))
-        self.wait(3)
-        self.play(self.current_components[5].animate.scale(1/1.7))
-        self.wait(3)
-        self.play(self.current_components[7].animate.scale(1.7))
-        self.wait(3)
-        self.play(self.current_components[7].animate.scale(1/1.7))
-        self.wait(3)
-        # scroll thru highlight boxes
-        for idx in range(len(self.highlight_boxes)-1):
-            self.play(ReplacementTransform(self.highlight_boxes[idx],
-                self.highlight_boxes[idx+1]))
-            self.wait(3)
-        # move a rectangle along the different types
-        # Wiki lookup
-        self.play(
-            *[FadeOut(mob)for mob in self.mobjects]
-        )
-        self.wiki_attributes = []
-        self.wiki_logo = ImageMobject(os.path.join(params["logo_path"], "wiki_logo.png"))
-        self.wiki_logo.scale_to_fit_height(6)
-        self.wiki_attributes.append(self.wiki_logo)
-        self.play(FadeIn(self.wiki_logo))
-        self.wait(2)
-        self.play(self.wiki_logo.animate.scale(0.25), duration = 0.4)
-        self.play(self.wiki_logo.animate.move_to([-6.0, 2.6, 0.0]))
-        self.prog_def = Text(params["programming_def_wiki"],
-            font_size = 20, font = "Ubuntu Mono")
-        self.prog_def.next_to(Dot(np.array([1.0, 3.5, 0.0])), DOWN)
-        self.wiki_attributes.append(self.prog_def)
-        self.play(Write(self.prog_def))
-        self.wait(3)
-        
-        self.algo_def = Text(params["algo_def"],
-            font_size = 17, font = "Ubuntu Mono")
-        self.language_def = Text(params["language_def"],
-            font_size = 17, font = "Ubuntu Mono")
-
-        self.algo_def.next_to(Dot(np.array([-3.5,1.5,0.0])), DOWN)
-        self.wiki_attributes.append(self.algo_def)
-        self.language_def.next_to(Dot(np.array([3.5,1.5,0.0])), DOWN)
-        self.wiki_attributes.append(self.language_def)
-        self.play(Write(self.algo_def), Write(self.language_def))
-        self.wait(2)
-
-        box_no = 3
-        flowchart = []
-        box_w = 1.0
-        box_h = 2.0
-        for box_idx in range(box_no):
-            current_box = Rectangle(width = 3.85, height = 1.2)
-            flowchart.append(current_box)
-            if box_idx < box_no - 1:
-                current_arrow = Arrow(start=LEFT, end=RIGHT, color = BLUE, max_stroke_width_to_length_ratio=2.5)
-                current_arrow = VMobject.scale(current_arrow,0.5)
-                flowchart.append(current_arrow)
-        # distribute 
-        
-        self.algo_visualization = VGroup(*flowchart)
-        self.algo_visualization.arrange_in_grid(rows = 1, buff = 0.1)
-        self.algo_visualization.next_to(Dot(np.array([0.0,0.5, 0.0])),DOWN)
-
-        svg_algo_path = params["svg_algo_path"]
-        svg_files = params["svg_algo_files"]        
-        svg_objects = [SVGMobject(file_name = os.path.join(svg_algo_path, svg_files[i]), color = WHITE) for i in range(len(svg_files))]
-        current_icon = svg_objects[0]
-        current_icon.next_to(self.algo_visualization, DOWN)
-        self.play(FadeIn(current_icon))
-        self.wait(3)
-        
-        
-        self.play(FadeIn(self.algo_visualization), duration = 0.5)
-        self.wait(3)
-        # switching captions
-
-        
-        text_list = []
-        cap_size = 17
-        for box_idx in range(box_no):
-            current_box = flowchart[2*box_idx]
-            center = current_box.get_center()
-            caption = Text(params["algo_captions"][0][box_idx], font_size = cap_size, font = "Ubuntu Mono")
-            caption.move_to([center[0], center[1], 0.0])
-            text_list.append(caption)
-            self.play(Write(caption))
-        
-        
-        num_of_switches = len(svg_files) - 1
-        # iterate thru texts and transform
-        for switch_idx in range(num_of_switches):
-            new_icon = svg_objects[switch_idx + 1]
-            new_icon.next_to(self.algo_visualization, DOWN)
-            self.play(ReplacementTransform(current_icon, new_icon))
-            current_icon = new_icon
-            for box_idx in range(box_no):
-                # transform box contents
-                current_box = flowchart[2*box_idx]
-                caption = Text(params["algo_captions"][switch_idx + 1][box_idx], font_size = cap_size, font = "Ubuntu Mono")
-                center = current_box.get_center()
-                caption.move_to([center[0], center[1], 0.0])
-                self.play(ReplacementTransform(text_list[box_idx], caption))
-                text_list[box_idx] = caption
-            
-            self.wait(5)
-        
-        # Move this to the side
-        self.full_algo_visualization = [self.algo_visualization] + text_list + [current_icon]
-        self.full_algo_visualization_group = Group(*self.full_algo_visualization)
-        self.wiki_attributes = self.wiki_attributes + self.full_algo_visualization
-        self.play(self.full_algo_visualization_group.animate.scale(0.5), duration = 0.4)
-        self.play(self.full_algo_visualization_group.animate.move_to([-3.5, -1.5, 0.0]))
-        
-        self.wait(3)
-        
-        # Computer with a speech bubble, w. some languages
-        self.screen_image.scale(0.125)
-        #self.screen_image.next_to(Dot(np.array([3,0.0,0])), DOWN)
-         
-        # Add bubble
-        self.speech_bubble = SVGMobject(file_name = os.path.join(svg_algo_path, params['bubble_path']), color = WHITE, stroke_width=0.1)
-        self.speech_bubble.next_to(Dot(np.array([1.5,1.5,0])), DOWN)
-        self.speech_bubble.scale(0.85)
-        
-        
-
-        self.prog_languages = Text(params["prog_languages"], font_size = 15, font = "Ubuntu Mono")
-        self.prog_languages.next_to(Dot(np.array([0.5,0.33,0]), DOWN))
-        
-        self.prog_languages_group = Group(self.screen_image, self.speech_bubble, self.prog_languages)
-        self.prog_languages_group.next_to(Dot(np.array([3.0,0.8,0.0])), DOWN)
-
-        self.wait(5)
-        self.play(FadeIn(self.screen_image), FadeIn(self.speech_bubble))
-        self.play(Write(self.prog_languages))
-        self.wait(5)
-        self.play(
-            *[FadeOut(mob)for mob in self.wiki_attributes]
-        )
-        self.play(self.prog_languages_group.animate.move_to([3.5, 0.0, 0.0]))
-        self.play(self.prog_languages_group.animate.scale(1.25))
-        self.wait(5)
         # load wiki, youtube logo, then fortnite/insta/tiktok...
 
         # erase all exept screen_im and prog languages
@@ -339,9 +298,10 @@ class IntroScene(Scene):
         }
         }
         """
-        self.fft_code = Text(fft_string, font_size = 6, font = "Ubuntu Mono")
+        self.fft_code = Text(fft_string, font_size = 6, font = params["font"])
         self.fft_code.next_to(Dot(np.array([-0.4,1.4,0])), DOWN)
         self.play(Write(self.fft_code))
+
 
 
     def play_png(self, params):
@@ -352,3 +312,68 @@ class IntroScene(Scene):
         image.scale(params["media_scale"])
         image.next_to(Dot(np.array([0,1.8,0])), DOWN)
         self.play(FadeIn(image))    
+
+class CoursesScene(Scene):
+    '''
+    Shows available ways to learn programming
+    '''
+    def construct(self):
+        with open('intro_settings.json') as f:
+            params = json.load(f)      
+        print(params)  
+        # display some of the courses you can sign up to
+        self.chapter_title = Text("Elérhető kurzusok...", font_size = 30, font = params["font"])
+        self.chapter_title.next_to(Dot(np.array([0,params["up_coord"],0])), DOWN)
+        
+        self.current_components = []
+        self.highlight_boxes = []
+        
+        course_types = ["universities", "free_courses", "paid_courses"]
+        course_texts = ["Egyetemek", "Ingyen kurzusok", "Fizetős kurzusok"]
+        
+        for course_type, course_text in zip(course_types,course_texts):
+            # write text
+            sub = Text(course_text,
+                font_size = 20,
+                font = params["font"])
+            self.current_components.append(sub)
+            highlight_box = Rectangle(width = sub.width + 0.1, height = sub.height+0.2)
+            self.highlight_boxes.append(highlight_box)
+            
+            for media_name in params[course_type]:
+                media_path = os.path.join(params["logo_path"], media_name)
+                image = ImageMobject(media_path)
+                image.scale_to_fit_height(1.2)
+                if media_name == ["bme.png"] or media_name == ["coursera.png"]:
+                    image.scale_to_fit_height(0.4)
+                self.current_components.append(image)
+        
+        self.current_group = Group(*self.current_components)
+        self.current_group.arrange_in_grid(rows = 3, buff = 0.5)
+        for idx, box in enumerate(self.highlight_boxes):
+            center = self.current_components[4*idx].get_center()
+            box.move_to([center[0], center[1], 0.0])
+        self.play(Write(self.chapter_title))
+        self.play(FadeIn(self.current_group))
+        self.wait(2)
+        self.play(Create(self.highlight_boxes[0]))
+        self.wait(2)
+        # try modifying the course icons for display
+        self.play(self.current_components[5].animate.scale(1.7))
+        self.wait(3)
+        self.play(self.current_components[5].animate.scale(1/1.7))
+        self.wait(3)
+        self.play(self.current_components[7].animate.scale(1.7))
+        self.wait(3)
+        self.play(self.current_components[7].animate.scale(1/1.7))
+        self.wait(3)
+        # scroll thru highlight boxes
+        for idx in range(len(self.highlight_boxes)-1):
+            self.play(ReplacementTransform(self.highlight_boxes[idx],
+                self.highlight_boxes[idx+1]))
+            self.wait(3)
+        # clear the scene
+        self.play(
+            *[FadeOut(mob)for mob in self.mobjects]
+        )
+    

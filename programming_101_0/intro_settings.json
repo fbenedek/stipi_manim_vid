@@ -27,6 +27,8 @@
     "svg_algo_path" : "media/images/everyday_objects",
     "svg_algo_files" : ["files.svg","car.svg","egg.svg"],
     "bubble_path" : "bubble.svg",
-    "prog_languages" : "C\nC++\nJava\nPython\n..."
+    "prog_languages" : "C\nC++\nJava\nPython\n...",
+    "font" : "Ubuntu Mono",
+    "up_coord" : 4.0
 
 }

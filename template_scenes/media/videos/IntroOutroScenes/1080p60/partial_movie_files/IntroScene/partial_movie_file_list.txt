@@ -1,0 +1,7 @@
+# This file is used internally by FFMPEG.
+file 'file:/media/bforrai/Benedek/A1/manim/stipi_manim_vid/template_scenes/media/videos/IntroOutroScenes/1080p60/partial_movie_files/IntroScene/2724823860_1951569410_253499415.mp4'
+file 'file:/media/bforrai/Benedek/A1/manim/stipi_manim_vid/template_scenes/media/videos/IntroOutroScenes/1080p60/partial_movie_files/IntroScene/1164547788_1652157064_3576333579.mp4'
+file 'file:/media/bforrai/Benedek/A1/manim/stipi_manim_vid/template_scenes/media/videos/IntroOutroScenes/1080p60/partial_movie_files/IntroScene/1164547788_2229719323_2064476793.mp4'
+file 'file:/media/bforrai/Benedek/A1/manim/stipi_manim_vid/template_scenes/media/videos/IntroOutroScenes/1080p60/partial_movie_files/IntroScene/1164547788_844937227_2771489448.mp4'
+file 'file:/media/bforrai/Benedek/A1/manim/stipi_manim_vid/template_scenes/media/videos/IntroOutroScenes/1080p60/partial_movie_files/IntroScene/1164547788_4276550438_1559939280.mp4'
+file 'file:/media/bforrai/Benedek/A1/manim/stipi_manim_vid/template_scenes/media/videos/IntroOutroScenes/1080p60/partial_movie_files/IntroScene/1164547788_86886429_3713953189.mp4'
